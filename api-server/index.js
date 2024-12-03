@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const { exec } = require("child_process");
+const { spawn } = require("child_process");
 const cors = require("cors");
 
 const app = express();
@@ -14,10 +14,24 @@ const BUCKETNAME = process.env.BUCKET_NAME;
 
 function runContainer(githubUrl, projectId) {
   return new Promise((resolve) => {
-    const child = exec(
-      `docker run -d -e GITHUB_REPOSITORY=${githubUrl} -e projectID=${projectId} -e REGION=${REGION} -e ACCESSKEYID=${ACCESSKEYID} -e SECRETACCESSKEY=${SECRETACCESSKEY} -e BUCKETNAME=${BUCKETNAME} build-server-image`
-    );
-
+    const child = spawn("docker", [
+      "run",
+      "--rm",
+      "-d",
+      "-e",
+      `GITHUB_REPOSITORY=${githubUrl}`,
+      "-e",
+      `projectID=${projectId}`,
+      "-e",
+      `REGION=${REGION}`,
+      "-e",
+      `ACCESSKEYID=${ACCESSKEYID}`,
+      "-e",
+      `SECRETACCESSKEY=${SECRETACCESSKEY}`,
+      "-e",
+      `BUCKETNAME=${BUCKETNAME}`,
+      "build-server-image",
+    ]);
     child.stdout?.on("data", function (data) {
       //   console.log("stdout: " + data);
     });
