@@ -45,11 +45,11 @@ function getAllFiles(folderPath) {
 
 async function main() {
   console.log("deploying to s3");
-  const buildFolderPath = path.join(__dirname, "output/build");
+  const buildFolderPath = path.join(__dirname, "output/dist");
   const buildFiles = getAllFiles(buildFolderPath);
   const uploadedPromises = buildFiles.map((file) => {
     const objectKey = path
-      .relative(path.join(__dirname, "output/build"), file)
+      .relative(path.join(__dirname, "output/dist"), file)
       .replace(/\\/g, "/");
     return uploadFileToS3(objectKey, file);
   });
