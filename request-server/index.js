@@ -7,10 +7,6 @@ const app = express();
 const proxy = httpProxy.createProxy();
 const BASE_URL = process.env.BASE_URL;
 
-app.get("/", (req, res) => {
-  res.send("Welcomne to web page");
-});
-
 app.use((req, res, next) => {
   const projectId = req.hostname.split(".")[0];
   // Custom Domain - DB Query

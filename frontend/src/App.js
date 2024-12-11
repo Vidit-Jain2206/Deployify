@@ -1,22 +1,20 @@
 import "./App.css";
 
 import React, { useState } from "react";
+import axios from "axios";
 
 const App = () => {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState("");
+  const [deployedUrl, setDeployedUrl] = useState("");
 
   const handleDeploy = async () => {
     setLoading(true);
-    setResponse(""); // Reset response
+    setDeployedUrl("");
     try {
-      // Simulate an API call
-      const deployedLink = "https://deployed-link.example.com";
-      setTimeout(() => {
-        setResponse(deployedLink);
-        setLoading(false);
-      }, 2000);
+      const { data } = await axios.post("/", { url });
+      console.log(data);
+      setDeployedUrl(data.url);
     } catch (error) {
       console.error("Deployment failed:", error);
       setLoading(false);
@@ -96,16 +94,16 @@ const App = () => {
           </div>
 
           {/* Response */}
-          {response && (
+          {deployedUrl && (
             <p className="mt-6 text-sm text-center text-[#f8f9fa]">
               Your deployed link:{" "}
               <a
-                href={response}
+                href={deployedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-[#dee2e6] transition"
               >
-                {response}
+                {deployedUrl}
               </a>
             </p>
           )}

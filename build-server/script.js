@@ -4,13 +4,17 @@ const path = require("path");
 const mime = require("mime-types");
 const { PutObjectCommand, S3Client } = require("@aws-sdk/client-s3");
 
-const PROJECTID = process.env.projectID;
+const PROJECTID = process.env.PROJECT_ID;
+const ACCESS_KEY_ID = process.env.ACCESS_KEY_ID;
+const REGION = process.env.REGION;
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY;
+const BUCKET_NAME = process.env.BUCKET_NAME;
 
 const client = new S3Client({
-  region: process.env.REGION || "",
+  region: REGION,
   credentials: {
-    accessKeyId: process.env.ACCESSKEYID || "",
-    secretAccessKey: process.env.SECRETACCESSKEY || "",
+    accessKeyId: ACCESS_KEY_ID,
+    secretAccessKey: SECRET_ACCESS_KEY,
   },
 });
 
@@ -18,7 +22,7 @@ async function uploadFileToS3(Key, file) {
   const fileContent = fs.readFileSync(file);
 
   const params = {
-    Bucket: process.env.BUCKETNAME || "",
+    Bucket: BUCKET_NAME,
     Key: `${PROJECTID}/${Key}`,
     Body: fileContent,
     ContentType: mime.lookup(file),
@@ -45,6 +49,7 @@ function getAllFiles(folderPath) {
 
 async function main() {
   console.log("deploying to s3");
+
   const buildFolderPath = path.join(__dirname, "output/dist");
   const buildFiles = getAllFiles(buildFolderPath);
   const uploadedPromises = buildFiles.map((file) => {
