@@ -13,8 +13,8 @@ const REGION = process.env.REGION;
 const BUCKET_NAME = process.env.BUCKET_NAME;
 const TASK_DEFINITION = process.env.TASK_DEFINITION;
 const CLUSTER_DEFINITION = process.env.CLUSTER_DEFINITION;
-const SUBNETS = process.env.SUBNETS;
-const SECURITY_GROUPS = process.env.SECURITY_GROUPS;
+const SUBNETS = process.env.SUBNETS.split(",");
+const SECURITY_GROUPS = process.env.SECURITY_GROUPS.split(",");
 const ecsclient = new ECSClient({
   region: REGION,
   credentials: {
@@ -73,9 +73,9 @@ async function runContainer(githubUrl, projectId) {
       },
     });
     const response = await ecsclient.send(command);
-    console.log(response);
     return response;
   } catch (error) {
+    console.log(error);
     throw new Error(`Task failed: ${error.message}`);
   }
 }
