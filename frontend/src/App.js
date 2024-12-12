@@ -12,9 +12,11 @@ const App = () => {
     setLoading(true);
     setDeployedUrl("");
     try {
-      const { data } = await axios.post("/", { url });
-      console.log(data);
+      const { data } = await axios.post("http://localhost:9000/deploy", {
+        githubUrl: url,
+      });
       setDeployedUrl(data.url);
+      setLoading(false);
     } catch (error) {
       console.error("Deployment failed:", error);
       setLoading(false);

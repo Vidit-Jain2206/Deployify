@@ -13,9 +13,10 @@ const REGION = process.env.REGION;
 const BUCKET_NAME = process.env.BUCKET_NAME;
 const TASK_DEFINITION = process.env.TASK_DEFINITION;
 const CLUSTER_DEFINITION = process.env.CLUSTER_DEFINITION;
-
+const SUBNETS = process.env.SUBNETS;
+const SECURITY_GROUPS = process.env.SECURITY_GROUPS;
 const ecsclient = new ECSClient({
-  region: "ap-south-1",
+  region: REGION,
   credentials: {
     accessKeyId: ACCESS_KEY_ID,
     secretAccessKey: SECRET_ACCESS_KEY,
@@ -24,8 +25,6 @@ const ecsclient = new ECSClient({
 
 async function runContainer(githubUrl, projectId) {
   try {
-    console.log("container running");
-
     const command = new RunTaskCommand({
       taskDefinition: TASK_DEFINITION,
       cluster: CLUSTER_DEFINITION,
@@ -33,12 +32,8 @@ async function runContainer(githubUrl, projectId) {
       count: 1,
       networkConfiguration: {
         awsvpcConfiguration: {
-          subnets: [
-            "subnet-0f49497714cce8fe9",
-            "subnet-0775cfcd8b914acf1",
-            "subnet-01789ff620c4168dc",
-          ],
-          securityGroups: ["sg-0a778da5075d00589"],
+          subnets: SUBNETS,
+          securityGroups: SECURITY_GROUPS,
           assignPublicIp: "ENABLED",
         },
       },
@@ -46,43 +41,41 @@ async function runContainer(githubUrl, projectId) {
       overrides: {
         containerOverrides: [
           {
-            name: "vercel-build-server-container",
+            name: "vercel-build-server",
             environment: [
               {
                 name: "ACCESS_KEY_ID",
-                value: ACCESS_KEY_ID,
+                value: String(ACCESS_KEY_ID),
               },
               {
                 name: "SECRET_ACCESS_KEY",
-                value: SECRET_ACCESS_KEY,
+                value: String(SECRET_ACCESS_KEY),
               },
               {
                 name: "REGION",
-                value: REGION,
+                value: String(REGION),
               },
               {
                 name: "BUCKET_NAME",
-                value: BUCKET_NAME,
+                value: String(BUCKET_NAME),
               },
               {
                 name: "PROJECT_ID",
-                value: projectId,
+                value: String(projectId),
               },
               {
                 name: "GITHUB_REPOSITORY",
-                value: githubUrl,
+                value: String(githubUrl),
               },
             ],
           },
         ],
       },
     });
-    console.log(command);
     const response = await ecsclient.send(command);
-    console.log("Task started:", response);
+    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw new Error(`Task failed: ${error.message}`);
   }
 }
