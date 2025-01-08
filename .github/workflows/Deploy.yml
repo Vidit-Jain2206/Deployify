@@ -1,0 +1,38 @@
+name: Deploy React App to S3
+
+on:
+  push:
+    branches:
+      - main # Trigger deployment on push to main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18 # Use the Node.js version compatible with your project
+
+      - name: Install dependencies
+        run: cd frontend && npm install ## This will install the dependencies from package.json
+
+      - name: Build the project
+        run: cd frontend && npm run build # Assumes you have a "build" script in your package.json for Vite
+
+      - name: Install AWS CLI
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli
+
+      - name: Deploy the project to S3
+        env:
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: aws s3 cp frontend/build/ s3://$S3_BUCKET --recursive
