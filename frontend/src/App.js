@@ -55,7 +55,7 @@ const App = () => {
                 type="text"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="Enter your GitHub URL"
+                placeholder="Enter your GitHub Url"
                 className="w-full mt-1 px-4 py-2 rounded-lg border border-[#495057] bg-[#212529] text-[#dee2e6] placeholder-[#6c757d] focus:ring-[#f8f9fa] focus:border-[#f8f9fa]"
               />
             </div>
