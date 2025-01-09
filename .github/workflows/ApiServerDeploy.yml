@@ -25,7 +25,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
             if [ ! -d "api-server" ]; then
-              git clone https://github.com/vercel-clone/api-server.git
+              git clone ${{secrets.SERVER_GITHUB_URL}}
             fi
 
             cd api-server
