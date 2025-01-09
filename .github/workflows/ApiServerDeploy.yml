@@ -34,6 +34,16 @@ jobs:
 
             npm install
 
+            cat > .env << EOL
+            ACCESS_KEY_ID=${{secrets.EC2_ACCESS_KEY_ID}} 
+            SECRET_ACCESS_KEY=${{secrets.EC2_SECRET_ACCESS_KEY}}
+            REGION=${{secrets.EC2_REGION}}
+            BUCKET_NAME=${{secrets.EC2_BUCKET_NAME}}
+            TASK_DEFINITION=${{secrets.EC2_TASK_DEFINITION}}
+            CLUSTER_DEFINITION=${{secrets.EC2_CLUSTER_DEFINITION}}
+            SUBNETS=${{secrets.EC2_SUBNETS}}
+            SECURITY_GROUPS=${{secrets.EC2_SECURITY_GROUPS}}
+
             pm2 restart index.js || pm2 start index.js --name "api-server"
 
             echo "Deployment completed successfully"
