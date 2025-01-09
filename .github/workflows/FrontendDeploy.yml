@@ -1,0 +1,63 @@
+name: Deploy React App to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: cd frontend && npm install
+
+      - name: Build the project
+        run: cd frontend && npm run build
+      - name: Upload the Build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: success()
+    needs: build
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+
+      - name: Download the Build folder
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend-build
+          path: ./frontend-build
+
+      - name: Install AWS CLI
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli
+
+      - name: Deploy the project to S3
+        env:
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: aws s3 cp frontend/build/ s3://$S3_BUCKET --recursive
+
+      - name: Successful message
+        run: echo "Deployment was successful"
