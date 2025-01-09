@@ -48,7 +48,7 @@ function getAllFiles(folderPath) {
 }
 
 async function main() {
-  console.log("deploying to s3");
+  console.log("deploying to s3!!!");
 
   const buildFolderPath = path.join(__dirname, "output/dist");
   const buildFiles = getAllFiles(buildFolderPath);
@@ -60,7 +60,7 @@ async function main() {
   });
 
   await Promise.all(uploadedPromises);
-  console.log("deployment to s3 complete");
+  console.log("deployment to s3 complete!!!");
 }
 
 main();

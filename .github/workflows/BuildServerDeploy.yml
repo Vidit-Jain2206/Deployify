@@ -1,0 +1,43 @@
+name: Deploy React App to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "build-server/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+
+      - name: Install AWS CLI
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli
+
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to AWS ECR account
+        run: aws ecr get-login-password --region ${{secrets.AWS_REGION}} | docker login --username ${{secrets.AWS_ECR_USERNAME}} --password-stdin ${{secrets.AWS_ECR_URL}}
+
+      - name: Build the Docker image
+        run: cd build-server && docker build -t ${{secrets.LOCAL_IMAGE_NAME}} .
+
+      - name: Tag the Docker image
+        run: docker tag ${{secrets.LOCAL_IMAGE_NAME}}:latest ${{secrets.AWS_ECR_URL}}:latest
+
+      - name: Push Docker image to ECR
+        run: docker push ${{secrets.AWS_ECR_URL}}:latest
+
+      - name: Successful message
+        run: echo "Deployment was successful"
