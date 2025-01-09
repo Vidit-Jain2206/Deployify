@@ -1,0 +1,46 @@
+name: Deploy Node.js App to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "api-server/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+
+      - name: Create private key file
+        run: echo "${{ secrets.PRIVATE_KEY }}" > ec2-key.pem
+
+      - name: Set permissions for private key
+        run: chmod 400 ec2-key.pem
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
+            if [ ! -d "api-server" ]; then
+              git clone https://github.com/vercel-clone/api-server.git
+            fi
+
+            cd api-server
+
+            git pull origin main
+
+            npm install
+
+            pm2 restart index.js || pm2 start index.js --name "api-server"
+
+            echo "Deployment completed successfully"
+          EOF
+
+      - name: Cleanup private key
+        run: rm -f ec2-key.pem
+
+      - name: Successful message
+        run: echo "Deployment was successful"
