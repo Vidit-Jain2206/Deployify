@@ -24,11 +24,13 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
-            if [ ! -d "api-server" ]; then
+            if [ ! -d "Deployify/api-server" ]; then
               git clone ${{secrets.SERVER_GITHUB_URL}}
             fi
 
-            cd api-server
+            cd Deployify/api-server
+
+            pwd
 
             git pull origin main
 
