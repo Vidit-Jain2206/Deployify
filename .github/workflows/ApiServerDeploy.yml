@@ -43,6 +43,7 @@ jobs:
             CLUSTER_DEFINITION=${{secrets.EC2_CLUSTER_DEFINITION}}
             SUBNETS=${{secrets.EC2_SUBNETS}}
             SECURITY_GROUPS=${{secrets.EC2_SECURITY_GROUPS}}
+            EOL
 
             pm2 restart index.js || pm2 start index.js --name "api-server"
 
