@@ -41,10 +41,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download the Build folder
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: frontend-build
-          path: ./frontend-build
+          path: ./frontend/build
 
       - name: Install AWS CLI
         run: |

@@ -49,7 +49,7 @@ const App = () => {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-[#dee2e6]">
-                Your GitHub Project URL
+                Your GitHub Project Url
               </label>
               <input
                 type="text"
