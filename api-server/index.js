@@ -96,7 +96,7 @@ app.post("/deploy", async (req, res) => {
     });
 });
 app.get("/", (req, res) => {
-  res.send("Deployify api-Server");
+  res.send("Deployify Server");
 });
 app.listen(9000, () => {
   console.log("Server started on port 9000");

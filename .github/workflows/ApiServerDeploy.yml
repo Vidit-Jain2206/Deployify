@@ -30,8 +30,6 @@ jobs:
 
             cd Deployify/api-server
 
-            pwd
-
             git pull origin main
 
             npm install
